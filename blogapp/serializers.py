@@ -1,6 +1,12 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import CustomUser
+from .models import Blog
+
+class UpdateUserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ["id", "email", "username", "first_name", "last_name", "bio", "profile_picture", "facebook", "youtube", "instagram", "twitter"]
+        
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,3 +34,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         new_user.set_password(password)
         new_user.save()
         return new_user
+    
+class SimpleAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['id', 'username', 'first_name', 'last_name']
+
+    
+class BlogSerializer(serializers.ModelSerializer):
+    author = SimpleAuthorSerializer(read_only=True)
+    class Meta:
+        model =  Blog
+        fields = ['id', 'title', 'slug', 'content', 'author', 'created_at', 'updated_at', 'published_date', 'is_draft', 'category',  'featured_image', ]
